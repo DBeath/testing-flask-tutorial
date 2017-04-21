@@ -28,14 +28,14 @@ def test_add_integer_and_string():
 
 
 def test_add_view_returns_result(client):
-    a = 1
-    b = 2
-
-    url = url_for('frontend.add_view', input1=a, input2=b)
+    url = url_for('frontend.add_view', input1=1, input2=2)
 
     response = client.post(url)
 
     assert response.status_code == 200
+
+    assert type(response.get_data()) is bytes
+
     assert int(response.get_data()) == 3
 
 
@@ -45,3 +45,12 @@ def test_add_view_returns_400(client):
     response = client.post(url)
 
     assert response.status_code == 400
+
+
+def test_get_all_users(client):
+    url = url_for('frontend.get_users')
+
+    response = client.get(url)
+
+    assert response.status_code == 200
+    print(response.get_data())

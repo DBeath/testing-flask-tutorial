@@ -1,5 +1,5 @@
 from application.frontend import frontend_blueprint as bp
-from flask import request, make_response, abort, Response
+from flask import request, make_response, abort, Response, jsonify
 from application.frontend.models import User
 from application.database import db
 
@@ -27,7 +27,8 @@ def add_view():
 @bp.route('/users')
 def get_users():
     users = User.query.all()
-    return users
+    return jsonify(users)
+
 
 @bp.route('/users', methods=['POST'])
 def create_user():
@@ -36,6 +37,7 @@ def create_user():
     db.session.add(user)
     db.session.commit()
     return user
+
 
 @bp.route('/users/<int:user_id>', methods=['GET', 'POST'])
 def single_user(user_id):
@@ -49,6 +51,7 @@ def single_user(user_id):
         db.session.commit()
 
     return user
+
 
 @bp.route('/users/<int:user_id>/delete', methods=['POST'])
 def delete_user(user_id):
