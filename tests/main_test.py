@@ -1,5 +1,7 @@
 from flask import url_for
 from application.frontend.views import add
+from application.frontend.models import User, users_schema
+from application.database import db
 
 
 def test_index(client):
@@ -47,10 +49,37 @@ def test_add_view_returns_400(client):
     assert response.status_code == 400
 
 
-def test_get_all_users(client):
+def test_get_all_users(client, session):
+    user1 = User(name='Test User 1')
+    user2 = User(name='Test User 2')
+
+    db.session.add(user1)
+    db.session.add(user2)
+    db.session.commit()
+
     url = url_for('frontend.get_users')
 
     response = client.get(url)
 
     assert response.status_code == 200
+
+    json_users = response.get_data()
+    print(json_users)
+
+    users = users_schema.load(json_users, session=db.session).data
+    print(users)
+    assert False
+
+
+def test_create_user(client, session):
+    user_name = 'Test User'
+
+    url = url_for('frontend.create_user')
+
+    params = {'name': user_name}
+    response = client.post(url, data=params)
+
+    assert response.status_code == 200
     print(response.get_data())
+
+    assert False
